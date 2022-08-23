@@ -2,23 +2,19 @@
 import supertest from "supertest";
 import app from "../../app";
 import { mongoDB } from "../fixtures";
-import jwt from "jsonwebtoken";
-
-const generateToken = (ID) => {
-  return jwt.sign({ ID }, process.env.JWT_SECRET, {
-    expiresIn: "1d",
-  });
-};
+//funcoes a serem testadas: createUser+- allUser++ logi+- user--
+//const--------------------------------------------------
 const NAME = "Will";
 const EMAIL = "will@gmail.com";
-const PASSWORD = "will123";
-const ID = "63042d727576f01df37ad552";
-const TOKEN = generateToken(ID);
 const PASSWORDCRIPTO =
   "$2b$10$vtXewtwsqi.8/ySCn3VnhuJWpnDhJGt7JtAVnsuA1EEegNVdy.x7C";
-
+//---------------------------------------------------------
 let globalResponse;
+let loginResponse;
+let allUserResponse;
+//----------------------------------------------------------
 
+//--------------------------------------------
 beforeAll(async () => {
   mongoDB.connect();
   await mongoDB.mongoose.connection.dropDatabase();
@@ -36,35 +32,38 @@ afterAll((done) => {
   mongoDB.disconnect(done);
 });
 //createUser---------------------------------
-describe("post new user", () => {
+describe("criando usuario", () => {
   test("testa o endpoint newUser", async () => {
     expect(globalResponse.status).toBe(200);
-    expect(globalResponse.body).toEqual({
-      _id: ID,
-      name: NAME,
-      email: EMAIL,
-      token: TOKEN,
-      ...globalResponse.body,
-    });
+    expect(globalResponse.body).toHaveProperty("_id");
+    expect(globalResponse.body).toHaveProperty("token");
   });
-  test("testa o endpoint newUser se der errado", async () => {
-    const response = await supertest(app).post("/newUser").send({
+  test("ver se o nome ja existe", async () => {
+    const response = await supertest(app).get("/newUser").send({
+      name: NAME,
+    });
+    expect(response.status).toBe(404);
+  });
+  test("ver se o email ja existe", async () => {
+    const response = await supertest(app).get("/newUser").send({
       email: EMAIL,
     });
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(404);
   });
 });
-//Login----------------------------------------------------OKOK
+//Login----------------------------------------------------NAO TA FUNCIONANDO
 describe("post login", () => {
   test("testa o endpoint login", async () => {
-    expect(globalResponse.status).toBe(200);
-    expect(globalResponse.body).toEqual({
-      _id: ID,
-      name: NAME,
-      email: EMAIL,
-      token: TOKEN,
-      ...globalResponse.body,
-    });
+    loginResponse = await supertest(app)
+      .post("/login")
+      .set("Content-Type", "application/json")
+      .send({
+        email: EMAIL,
+        password: PASSWORDCRIPTO,
+      });
+    expect(loginResponse.status).toBe(200);
+    expect(loginResponse.body).toHaveProperty("_id");
+    expect(loginResponse.body).toHaveProperty("token");
   });
   test("testa o endpoint login se der errado", async () => {
     const response = await supertest(app).get("/login").send({
@@ -73,33 +72,24 @@ describe("post login", () => {
     expect(response.status).toBe(404);
   });
 });
-//allUser----------------------------------------------------------------OKOK
-describe("all user", () => {
-  test("testa o endpoint allUser", async () => {
-    expect(globalResponse.status).toBe(200);
-    expect(globalResponse.body).toEqual({
-      _id: ID,
-      name: NAME,
-      email: EMAIL,
-      token: TOKEN,
-      ...globalResponse.body,
-    });
-  });
-  test("testa o endpoint allUser se der errado", async () => {
-    const response = await supertest(app).get("/allUser");
-    expect(response.status).toBe(401);
+//allUser---------------------------------------------------
+describe("get allUser", () => {
+  test("se der certo", async () => {
+    allUserResponse = await supertest(app)
+      .get("/allUser")
+      .set("Content-Type", "application/json");
+    expect(allUserResponse);
   });
 });
-//user--------------------------------------------------------
-describe("user", () => {
-  test("testa o endpoint user", async () => {
-    expect(globalResponse.status).toBe(200);
-    expect(globalResponse.body).toEqual({
-      name: NAME,
-    });
-  });
-  test("testa o endpoint user se der errado", async () => {
-    const response = await supertest(app).get("/user");
-    expect(response.status).toBe(500);
-  });
-});
+// //user--------------------------------------------------------
+// describe("user", () => {
+//   test("testa o endpoint user", async () => {
+//     expect(globalResponse.status).toBe(200);
+//     expect(globalResponse.body).toHaveProperty("email");
+//     expect(globalResponse.body).toHaveProperty("email");
+//   });
+//   test("testa o endpoint user se der errado", async () => {
+//     const response = await supertest(app).get("/user");
+//     expect(response.status).toBe(500);
+//   });
+// });
