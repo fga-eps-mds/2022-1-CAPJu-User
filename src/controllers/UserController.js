@@ -79,9 +79,9 @@ class UserController {
     try {
       const { email, password } = req.body;
       // Check for user email
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email: email.toString() });
 
-      if (user && (await bcrypt.compare(password, user.password))) {
+      if (user && (await bcrypt.compare(password.toString(), user.password))) {
         return res.status(200).json({
           _id: user.id,
           name: user.name,
@@ -100,7 +100,7 @@ class UserController {
     try {
       const { email } = req.body;
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email: email.toString() });
 
       if (!user) {
         return res
@@ -153,7 +153,7 @@ class UserController {
     try {
       const { hash, newPassword } = req.body;
 
-      const user = await User.findOne({ recoveryHash: hash });
+      const user = await User.findOne({ recoveryHash: hash.toString() });
 
       if (!user) {
         return res.status(404).json({
@@ -168,7 +168,7 @@ class UserController {
       }
 
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      const hashedPassword = await bcrypt.hash(newPassword.toString(), salt);
 
       await User.updateOne(
         { _id: user._id },
