@@ -17,7 +17,7 @@ class UserController {
         email,
       });
       if (EmailAlreadyExist) {
-        return res.status(400).json({ message: "email already exist!" });
+        return res.status(400).json({ message: "Email ja existe!" });
       }
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
