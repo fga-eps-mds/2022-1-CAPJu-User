@@ -12,19 +12,12 @@ class UserController {
       const { name, email, password } = await UserValidator.validateAsync(
         req.body
       );
-      //ve se o nome existe
-      const UserAlreadyExist = await User.findOne({
-        name,
-      });
-      if (UserAlreadyExist) {
-        return res.status(400).json({ message: "user already exist!" });
-      }
       //ve se o email existe
       const EmailAlreadyExist = await User.findOne({
         email,
       });
       if (EmailAlreadyExist) {
-        return res.status(400).json({ message: "email already exist!" });
+        return res.status(400).json({ message: "Email ja existe!" });
       }
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
