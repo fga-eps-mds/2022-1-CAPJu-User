@@ -1,5 +1,9 @@
 name: CAPJu Service-User CI
 on: [push]
+
+env:
+  JWT_SECRET: testestestesteste
+
 jobs:
   build:
     runs-on: ubuntu-latest
