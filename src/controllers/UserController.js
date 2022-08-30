@@ -12,13 +12,6 @@ class UserController {
       const { name, email, password } = await UserValidator.validateAsync(
         req.body
       );
-      //ve se o nome existe
-      const UserAlreadyExist = await User.findOne({
-        name,
-      });
-      if (UserAlreadyExist) {
-        return res.status(400).json({ message: "user already exist!" });
-      }
       //ve se o email existe
       const EmailAlreadyExist = await User.findOne({
         email,
