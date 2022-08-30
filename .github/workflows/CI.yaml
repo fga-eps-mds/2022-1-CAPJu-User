@@ -12,7 +12,7 @@ jobs:
       - name: Lint Analysis
         run: cd src && yarn eslint . && cd ..
       - name: Tests
-        run: cd src && yarn test && cd ../
+        run: yarn test
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
