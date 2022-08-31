@@ -14,6 +14,8 @@ let loginResponse;
 let allUserResponse;
 //----------------------------------------------------------
 
+jest.setTimeout(30000);
+
 //--------------------------------------------
 beforeAll(async () => {
   mongoDB.connect();
