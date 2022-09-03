@@ -1,6 +1,13 @@
 import jwt from "jsonwebtoken";
 import User from "../schemas/User.js";
+// import UserController from "../controllers/UserController";
 
+async function canCreateUser(req, res, next) {
+  console.log(req.user.role);
+  if (req.user.role != "ADMIN") {
+    return;
+  } else next();
+}
 async function protect(req, res, next) {
   let token;
 
@@ -30,4 +37,4 @@ async function protect(req, res, next) {
   }
 }
 
-export { protect };
+export { protect, canCreateUser };
