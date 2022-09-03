@@ -10,6 +10,7 @@ const UserSchema = new Schema(
     email: String,
     password: String,
     role: String,
+    status: Boolean,
     recoveryHash: String,
     recoveryDate: Date,
   },

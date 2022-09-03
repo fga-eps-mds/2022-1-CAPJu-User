@@ -32,6 +32,7 @@ class UserController {
         email,
         password: hashedPassword,
         role: ROLE.BASIC,
+        status: false
       });
       console.log(user);
       if (user) {
@@ -40,6 +41,7 @@ class UserController {
           name: user.name,
           email: user.email,
           token: generateToken(user._id),
+          status: user.status
         });
       } else {
         return res.status(400);
@@ -61,7 +63,20 @@ class UserController {
       return res.status(500).json(error);
     }
   }
-
+  // Adicionando metodo para aceitar cadastro de usuario 
+  async acceptUser(req, res){
+    try {
+      const user = await User.findOne( {_id: req.body.id });
+      return res.status(200).json({
+        user,
+        status: true
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+  // ---------------------------------------------
   async user(req, res) {
     try {
       const user = await User.findOne({ name: req.body.name });
