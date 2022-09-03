@@ -4,7 +4,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
-
+//-------------------------------------------------
+const ROLE = {
+  ADMIN: "admin",
+  BASIC: "basic",
+};
+//-------------------------------------------------
 class UserController {
   async createUser(req, res) {
     try {
@@ -26,6 +31,7 @@ class UserController {
         name,
         email,
         password: hashedPassword,
+        role: ROLE.BASIC,
       });
       console.log(user);
       if (user) {
