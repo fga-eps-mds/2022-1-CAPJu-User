@@ -34,5 +34,29 @@ class RoleController {
       return res.status(500).json(error);
     }
   }
+
+  async deleteRole(req, res) {
+    try {
+      const RoleId = req.body.RoleId;
+      const role = await Role.findOne({ _id: RoleId });
+
+      if (!role) {
+        return res.status(404).json({
+          message: "Role not found",
+        });
+      }
+
+      const result = await Role.updateOne(
+        { _id: role._id },
+        { deleted: true },
+        { upsert: true }
+      );
+
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
 }
 export default new RoleController();
