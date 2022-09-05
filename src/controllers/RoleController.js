@@ -58,5 +58,16 @@ class RoleController {
       return res.status(500).json(error);
     }
   }
+  async editRole(req, res) {
+    try {
+      const body = await await RoleValidator.validateAsync(req.body);
+
+      const result = await Role.updateOne({ _id: body._id }, body);
+      res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
 }
 export default new RoleController();
