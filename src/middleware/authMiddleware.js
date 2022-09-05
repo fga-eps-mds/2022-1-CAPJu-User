@@ -2,12 +2,17 @@ import jwt from "jsonwebtoken";
 import User from "../schemas/User.js";
 // import UserController from "../controllers/UserController";
 
-async function canCreateUser(req, res, next) {
-  console.log(req.user.role);
-  if (req.user.role != "ADMIN") {
-    return;
-  } else next();
+//Provavelmente faremos a atenticação nas rotas por permissões e uma role manterá um conjunto de permissões
+function authRole(role) {
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      res.status(401);
+      return res.send("Sem permissão");
+    }
+    next();
+  };
 }
+
 async function protect(req, res, next) {
   let token;
 

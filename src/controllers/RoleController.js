@@ -5,15 +5,21 @@ class RoleController {
   async createRole(req, res) {
     try {
       const name = await RoleValidator.validateAsync(req.body);
+      const permissions = await req.body.permissions;
       const RoleAlreadyExist = await Role.findOne({ name });
       if (RoleAlreadyExist) {
         return res.status(400).json({ message: "Role já existe!" });
       }
       const role = await Role.create({
         name,
+        permissions,
+        deleted: false,
       });
       if (role) {
-        return res.status(200).json({ name: role.name });
+        return res.status(200).json({
+          name: role.name,
+          permissions: role.permissions,
+        });
       } else {
         return res.status(400);
       }

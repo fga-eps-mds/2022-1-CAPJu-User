@@ -13,5 +13,8 @@ routes.post("/requestRecovery", UserController.requestRecoveryMail);
 routes.post("/updatePassword", UserController.updatePassword);
 routes.post("/acceptUser", UserController.acceptUser);
 
-routes.get("/newRole", RoleController.createRole);
+routes.get("/newRole", protect, RoleController.createRole);
+routes.get("/Role", protect, RoleController.allRoles);
+routes.post("/deleteRole", protect, RoleController.deleteRole);
+routes.put("/editRole", protect, RoleController.editRole);
 export default routes;
