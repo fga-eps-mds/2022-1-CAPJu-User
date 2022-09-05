@@ -1,5 +1,6 @@
 import { Router } from "express";
 import UserController from "./controllers/UserController.js";
+import RoleController from "./controllers/RoleController.js";
 import { protect, canCreateUser } from "./middleware/authMiddleware.js";
 
 const routes = Router();
@@ -12,4 +13,5 @@ routes.post("/requestRecovery", UserController.requestRecoveryMail);
 routes.post("/updatePassword", UserController.updatePassword);
 routes.post("/acceptUser", UserController.acceptUser);
 
+routes.get("/newRole", RoleController.createRole);
 export default routes;
