@@ -17,4 +17,7 @@ routes.get("/newRole", protect, RoleController.createRole);
 routes.get("/Role", protect, RoleController.allRoles);
 routes.post("/deleteRole", protect, RoleController.deleteRole);
 routes.put("/editRole", protect, RoleController.editRole);
+
+//criar rota que mostrará todas as permissões
+
 export default routes;

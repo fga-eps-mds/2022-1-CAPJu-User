@@ -1,11 +1,12 @@
 import jwt from "jsonwebtoken";
 import User from "../schemas/User.js";
+import { canSeeProcesses } from "../permissions/permissions.js";
 // import UserController from "../controllers/UserController";
 
 //Provavelmente faremos a atenticação nas rotas por permissões e uma role manterá um conjunto de permissões
-function authRole(role) {
+function authSeeProcesses(role) {
   return (req, res, next) => {
-    if (req.user.role !== role) {
+    if (!canSeeProcesses(req.user)) {
       res.status(401);
       return res.send("Sem permissão");
     }
@@ -42,4 +43,4 @@ async function protect(req, res, next) {
   }
 }
 
-export { protect, canCreateUser };
+export { protect, authSeeProcesses };
