@@ -1,5 +1,5 @@
 import User from "../schemas/User.js";
-import { UserValidator } from "../validators/User.js";
+import { UserValidator, UserEditRoleValidator } from "../validators/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -77,6 +77,18 @@ class UserController {
     }
   }
   // ---------------------------------------------
+  // Endpoint de editar role de um usuário
+  async editRoleUser(req, res) {
+    try {
+      const body = await UserEditRoleValidator.validateAsync(req.body);
+      const result = await User.updateOne({ _id: body._id }, body);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+  //----------------------------------------------
   async user(req, res) {
     try {
       const user = await User.findOne({ name: req.body.name });
