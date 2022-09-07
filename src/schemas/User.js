@@ -1,3 +1,4 @@
+import { number } from "joi";
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
@@ -12,7 +13,7 @@ const UserSchema = new Schema(
     status: Boolean,
     recoveryHash: String,
     recoveryDate: Date,
-    role: Schema.Types.ObjectId,
+    role: { type: String, default: "Estagiário" },
   },
   {
     timestamps: true,

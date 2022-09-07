@@ -1,5 +1,9 @@
+const codigo = 1;
 function canSeeProcesses(user) {
-  return user.role.permissions === 1;
+  const found = user.role.permissions.find((element) => element == codigo);
+  return found == codigo;
 }
 
-export { canSeeProcesses };
+module.exports = {
+  canSeeProcesses,
+};

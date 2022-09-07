@@ -3,13 +3,13 @@ import User from "../schemas/User.js";
 import { canSeeProcesses } from "../permissions/permissions.js";
 // import UserController from "../controllers/UserController";
 
-//Provavelmente faremos a atenticação nas rotas por permissões e uma role manterá um conjunto de permissões
-function authSeeProcesses(role) {
+function authRole(role) {
   return (req, res, next) => {
-    if (!canSeeProcesses(req.user)) {
+    if (req.user.role !== role) {
       res.status(401);
-      return res.send("Sem permissão");
+      return res.send("Sem permissão!");
     }
+
     next();
   };
 }
@@ -43,4 +43,4 @@ async function protect(req, res, next) {
   }
 }
 
-export { protect, authSeeProcesses };
+export { protect, authRole };
