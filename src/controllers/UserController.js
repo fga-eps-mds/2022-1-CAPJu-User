@@ -142,6 +142,16 @@ class UserController {
     }
   }
 
+  async updateUser(req, res) {
+    try {
+      const editEmail = await User.updateOne({ _id: req.params.id }, req.body);
+      return res.status(200).json(editEmail);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+
   async updatePassword(req, res) {
     try {
       const { hash, newPassword } = req.body;
