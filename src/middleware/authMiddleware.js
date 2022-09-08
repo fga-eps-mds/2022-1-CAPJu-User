@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../schemas/User.js";
-import { canSeeProcesses } from "../permissions/permissions.js";
+//import { canSeeProcesses } from "../permissions/permissions.js";
 // import UserController from "../controllers/UserController";
 
 function authRole(role) {
