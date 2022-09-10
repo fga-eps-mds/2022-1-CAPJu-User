@@ -1,18 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../schemas/User.js";
-import { canSeeProcesses } from "../permissions/permissions.js";
 // import UserController from "../controllers/UserController";
-
-function authRole(role) {
-  return (req, res, next) => {
-    if (req.user.role !== role) {
-      res.status(401);
-      return res.send("Sem permissão!");
-    }
-
-    next();
-  };
-}
 
 async function protect(req, res, next) {
   let token;
@@ -41,6 +29,17 @@ async function protect(req, res, next) {
   if (!token) {
     return res.status(401).send();
   }
+}
+
+function authRole(role) {
+  return (req, res, next) => {
+    const Role = role.filter(req.user.role);
+    if (req.user.role !== Role) {
+      res.status(401);
+      return res.send("Sem permissão!");
+    }
+    next();
+  };
 }
 
 export { protect, authRole };
