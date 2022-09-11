@@ -31,16 +31,22 @@ async function protect(req, res, next) {
     return res.status(401).send();
   }
 }
+async function isAdmin (req, res, next) {
+  if (req.user.role !== 1){
+      return res.status(401).send();
+  }
+  next();
 
-function authRole(role) {
-  return (req, res, next) => {
-    const Role = role.filter(req.user.role);
-    if (req.user.role != Role) {
-      res.status(401);
-      return res.send("Sem permissão!");
-    }
-    next();
-  };
 }
+// function authRole(role) {
+//   return (req, res, next) => {
+//     const Role = role.filter(req.user.role);
+//     if (req.user.role != Role) {
+//       res.status(401);
+//       return res.send("Sem permissão!");
+//     }
+//     next();
+//   };
+// }
 
-export { protect, authRole };
+export { protect , isAdmin };

@@ -12,7 +12,10 @@ const UserSchema = new Schema(
     status: Boolean,
     recoveryHash: String,
     recoveryDate: Date,
-    role: Number,
+    role: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
