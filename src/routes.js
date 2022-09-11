@@ -10,10 +10,7 @@ routes.get("/allUser", protect, UserController.allUser);
 routes.post("/login", UserController.login);
 routes.post("/requestRecovery", UserController.requestRecoveryMail);
 routes.post("/updatePassword", UserController.updatePassword);
-routes.post(
-  "/acceptRequest/:userId",
-  protect,
-  UserController.acceptRequest
-);
+routes.post("/acceptRequest/:userId", protect, UserController.acceptRequest);
+routes.delete("/deleteRequest/:userId", protect, UserController.deleteRequest);
 
 export default routes;
