@@ -1,15 +1,11 @@
-// import User from "schemas/User";
-import { response } from "express";
 import supertest from "supertest";
 import app from "../../app";
 import { mongoDB } from "../fixtures";
-//funcoes a serem testadas: createUser+- allUser++ logi+- user--
 //const--------------------------------------------------
 const NAME = "Will";
 const EMAIL = "will@gmail.com";
 const PASSWORDCRIPTO =
   "$2b$10$vtXewtwsqi.8/ySCn3VnhuJWpnDhJGt7JtAVnsuA1EEegNVdy.x7C";
-const ID = "631d33f04acf2a53e5184ff9";
 //---------------------------------------------------------
 let globalResponse;
 let loginResponse;
@@ -56,7 +52,7 @@ describe("criando usuario", () => {
     expect(response.status).toBe(404);
   });
 });
-//Login----------------------------------------------------NAO TA FUNCIONANDO
+//Login----------------------------------------------------
 describe("post login", () => {
   test("testa o endpoint login", async () => {
     loginResponse = await supertest(app)
@@ -86,16 +82,15 @@ describe("get allUser", () => {
     expect(allUserResponse);
   });
 });
-//updateUser
+//updateUser---------------------------------------------------------------
 describe("put updateUser", () => {
   test("se der certo", async () => {
     updateUserResponse = await supertest(app)
       .put("/updateUser/6312a097ddee03692aefdfd9")
-      .set({
+      .send({
         email: "eu@gmail.com",
       });
     expect(updateUserResponse.status).toBe(200);
-    expect(updateUserResponse.body).toBe({ acknowledged: true });
   });
 });
 
