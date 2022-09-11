@@ -1,4 +1,5 @@
 // import User from "schemas/User";
+import { response } from "express";
 import supertest from "supertest";
 import app from "../../app";
 import { mongoDB } from "../fixtures";
@@ -8,10 +9,12 @@ const NAME = "Will";
 const EMAIL = "will@gmail.com";
 const PASSWORDCRIPTO =
   "$2b$10$vtXewtwsqi.8/ySCn3VnhuJWpnDhJGt7JtAVnsuA1EEegNVdy.x7C";
+const ID = "631d33f04acf2a53e5184ff9";
 //---------------------------------------------------------
 let globalResponse;
 let loginResponse;
 let allUserResponse;
+let updateUserResponse;
 //----------------------------------------------------------
 
 jest.setTimeout(30000);
@@ -83,6 +86,19 @@ describe("get allUser", () => {
     expect(allUserResponse);
   });
 });
+//updateUser
+describe("put updateUser", () => {
+  test("se der certo", async () => {
+    updateUserResponse = await supertest(app)
+      .put("/updateUser/6312a097ddee03692aefdfd9")
+      .set({
+        email: "eu@gmail.com",
+      });
+    expect(updateUserResponse.status).toBe(200);
+    expect(updateUserResponse.body).toBe({ acknowledged: true });
+  });
+});
+
 // //user--------------------------------------------------------
 // describe("user", () => {
 //   test("testa o endpoint user", async () => {
