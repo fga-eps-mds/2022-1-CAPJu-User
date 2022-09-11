@@ -4,12 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
-//-------------------------------------------------
-const ROLE = {
-  ADMIN: "admin",
-  BASIC: "basic",
-};
-//-------------------------------------------------
+
 class UserController {
   async createUser(req, res) {
     try {
@@ -31,7 +26,7 @@ class UserController {
         name,
         email,
         password: hashedPassword,
-        role: ROLE.BASIC,
+        role: 1,
         status: false,
       });
       console.log(user);
@@ -39,6 +34,7 @@ class UserController {
         return res.status(200).json({
           _id: user.id,
           name: user.name,
+          role: user.role,
           email: user.email,
           token: generateToken(user._id),
           status: user.status,

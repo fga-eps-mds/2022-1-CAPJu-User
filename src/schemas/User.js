@@ -1,4 +1,3 @@
-//import { number } from "joi";
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
@@ -13,7 +12,7 @@ const UserSchema = new Schema(
     status: Boolean,
     recoveryHash: String,
     recoveryDate: Date,
-    role: String,
+    role: Number,
   },
   {
     timestamps: true,

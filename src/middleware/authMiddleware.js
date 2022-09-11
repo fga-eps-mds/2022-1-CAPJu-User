@@ -35,7 +35,7 @@ async function protect(req, res, next) {
 function authRole(role) {
   return (req, res, next) => {
     const Role = role.filter(req.user.role);
-    if (req.user.role !== Role) {
+    if (req.user.role != Role) {
       res.status(401);
       return res.send("Sem permissão!");
     }
