@@ -177,6 +177,18 @@ class UserController {
       return res.status(500);
     }
   }
+
+  async acceptRequest(req, res) {
+    try {
+      const userId = req.params.userId;
+      const user = await User.updateOne({ _id: userId }, { accepted: true });
+
+      return res.status(200).send(user);
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500);
+    }
+  }
 }
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {

@@ -10,5 +10,9 @@ routes.get("/allUser", protect, UserController.allUser);
 routes.post("/login", UserController.login);
 routes.post("/requestRecovery", UserController.requestRecoveryMail);
 routes.post("/updatePassword", UserController.updatePassword);
+routes.post(
+  "/acceptRequest/:userId",
+  UserController.acceptRequest
+);
 
 export default routes;
