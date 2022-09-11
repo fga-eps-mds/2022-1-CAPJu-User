@@ -12,6 +12,7 @@ routes.post("/requestRecovery", UserController.requestRecoveryMail);
 routes.post("/updatePassword", UserController.updatePassword);
 routes.post(
   "/acceptRequest/:userId",
+  protect,
   UserController.acceptRequest
 );
 

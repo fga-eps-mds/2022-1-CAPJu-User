@@ -46,7 +46,13 @@ class UserController {
 
   async allUser(req, res) {
     try {
-      const user = await User.find();
+      let accepted, user;
+      if (req.query.accepted){
+        accepted = req.query.accepted === 'true';
+        user = await User.find({accepted: accepted});
+      }
+      else
+      user = await User.find();
       return res.status(200).json({
         user,
       });
