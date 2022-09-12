@@ -27,7 +27,6 @@ class UserController {
         email,
         password: hashedPassword,
       });
-      console.log(user);
       if (user) {
         return res.status(200).json({
           _id: user.id,
@@ -79,6 +78,10 @@ class UserController {
       const { email, password } = req.body;
       // Check for user email
       const user = await User.findOne({ email: email.toString() });
+      if(!user) return res.status(401).json({ message: "o usuário não existe" });
+      if (!user.accepted) {
+        return res.status(401).json({ message: "solicitação de cadastro pendente" });
+      }
 
       if (user && (await bcrypt.compare(password.toString(), user.password))) {
         return res.status(200).json({
@@ -88,10 +91,10 @@ class UserController {
           token: generateToken(user._id),
         });
       } else {
-        return res.status(400).json({ message: "senha invalida" });
+        return res.status(400).json({ message: "senha inválida" });
       }
     } catch (error) {
-      return res.status(500);
+      return res.status(500).json({ message: "erro inesperado" });
     }
   }
 
