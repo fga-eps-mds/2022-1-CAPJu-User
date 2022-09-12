@@ -9,7 +9,7 @@ class UserController {
   async createUser(req, res) {
     try {
       //cria nome
-      const { name, email, password , role} = await UserValidator.validateAsync(
+      const { name, email, password, role } = await UserValidator.validateAsync(
         req.body
       );
       //ve se o email existe
@@ -60,18 +60,18 @@ class UserController {
     }
   }
   // Adicionando metodo para aceitar cadastro de usuario
-  async acceptUser(req, res) {
-    try {
-      const user = await User.findOne({ _id: req.body.id });
-      return res.status(200).json({
-        user,
-        status: true,
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error);
-    }
-  }
+  // async acceptUser(req, res) {
+  //   try {
+  //     const user = await User.findOne({ _id: req.body.id });
+  //     return res.status(200).json({
+  //       user,
+  //       status: true,
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     return res.status(500).json(error);
+  //   }
+  // }
   // ---------------------------------------------
   // Endpoint de editar role de um usuário
   async editRoleUser(req, res) {
@@ -79,6 +79,21 @@ class UserController {
       const body = await UserEditRoleValidator.validateAsync(req.body);
       const result = await User.updateOne({ _id: body._id }, body);
       return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+  //----------------------------------------------
+  // Endpoint de deletar um usuário
+  async deleteUser(req, res) {
+    try {
+      const result = await User.deleteOne({ _id: req.prams._id });
+      console.log(result);
+      if (result.deletedCount === 0) {
+        throw new Error(`Não há registro ${req.params._id}!`);
+      }
+      res.json(result);
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
