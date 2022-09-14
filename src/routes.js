@@ -27,5 +27,17 @@ routes.put(
   authRole([ROLE.DIRETOR]),
   UserController.editRoleUser
 );
+routes.post(
+  "/acceptRequest/:userId",
+  protect,
+  authRole([ROLE.DIRETOR]),
+  UserController.acceptRequest
+);
+routes.delete(
+  "/deleteRequest/:userId",
+  protect,
+  authRole([ROLE.DIRETOR]),
+  UserController.deleteRequest
+);
 
 export default routes;
