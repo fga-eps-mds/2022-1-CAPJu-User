@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
+import { transformFromAst } from "@babel/core";
 
 class UserController {
   async createUser(req, res) {
@@ -136,6 +137,28 @@ class UserController {
       res.status(200).send({ mailSent });
 
       // Check for user email
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500);
+    }
+  }
+  async editPassword(req, res) {
+    try {
+      const { oldPassword, newPassword } = req.body;
+      const user = await User.findOne({ _id: req.params.id }, req.body);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(oldPassword.toString(), salt);
+      const hashedPassword2 = await bcrypt.hash(newPassword.toString(), salt);
+
+      if (req.user.password == hashedPassword) {
+        await User.updateOne(
+          { _id: user._id },
+          { password: hashedPassword2 },
+          { upsert: true }
+        );
+
+        res.status(200).send();
+      }
     } catch (error) {
       console.log("error", error);
       return res.status(500);

@@ -11,5 +11,5 @@ routes.post("/login", UserController.login);
 routes.post("/requestRecovery", UserController.requestRecoveryMail);
 routes.post("/updatePassword", UserController.updatePassword);
 routes.put("/updateUser/:id", UserController.updateUser);
-routes.put("/updateUserPassword/:id", UserController.updatePassword);
+routes.put("/updateUserPassword/:id", UserController.editPassword);
 export default routes;
