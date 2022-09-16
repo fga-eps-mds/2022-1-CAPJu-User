@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
+import Unity from "schemas/Unity.js";
 
 class UserController {
   async createUser(req, res) {
@@ -210,6 +211,37 @@ class UserController {
       res.status(200).send();
 
       // Check for user email
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500);
+    }
+  }
+
+  async setUnityAdmin(req, res) {
+    try {
+      const { unityId, userId } = req.body;
+
+      const user = await User.findOne({ _id: userId });
+      if (!user) {
+        return res.status(404).json({
+          message: "Usuário não encontrado",
+        });
+      }
+
+      const unity = await Unity.findOne({ _id: unityId });
+      if (!unity) {
+        return res.status(404).json({
+          message: "Unidade não encontrado",
+        });
+      }
+
+      const result = await User.updateOne(
+        { _id: user._id },
+        { unityAdmin: unity._id },
+        { upsert: true }
+      );
+
+      return res.status(200).send(result);
     } catch (error) {
       console.log("error", error);
       return res.status(500);

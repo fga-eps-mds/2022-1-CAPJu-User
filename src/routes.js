@@ -39,5 +39,11 @@ routes.delete(
   authRole([ROLE.DIRETOR]),
   UserController.deleteRequest
 );
+routes.delete(
+  "/setUnityAdmin",
+  protect,
+  authRole([ROLE.DIRETOR]),
+  UserController.setUnityAdmin
+);
 
 export default routes;

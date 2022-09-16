@@ -13,6 +13,7 @@ const UserSchema = new Schema(
     deleted: Boolean,
     recoveryDate: Date,
     accepted: { type: Boolean, default: false },
+    unityAdmin: String,
     role: {
       type: Number,
     },
