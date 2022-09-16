@@ -130,11 +130,14 @@ class UserController {
       }
 
       if (user && (await bcrypt.compare(password.toString(), user.password))) {
+        let expiresIn = new Date();
+        expiresIn.setDate(expiresIn.getDate() + 3);
         return res.status(200).json({
           _id: user.id,
           name: user.name,
           email: user.email,
           token: generateToken(user._id),
+          expiresIn,
         });
       } else {
         return res.status(400).json({ message: "senha inválida" });
@@ -294,7 +297,7 @@ class UserController {
 }
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "1d",
+    expiresIn: "3d",
   });
 };
 export default new UserController();
