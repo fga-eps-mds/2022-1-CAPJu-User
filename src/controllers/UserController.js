@@ -144,18 +144,25 @@ class UserController {
   }
   async editPassword(req, res) {
     try {
-      //const password = req.user.password;
-      const { newPassword } = req.body;
-
+      const userId = req.params.id;
+      const { oldPassword, newPassword } = req.body;
       const salt = await bcrypt.genSalt(10);
-
       const hashedPassword = await bcrypt.hash(newPassword, salt);
+      const user = await User.findOne({ _id: userId });
+      if (!user) {
+        return res.status(404).send();
+      }
 
-      //if (password !== hashedPassword) {
-      await User.updateOne({ _id: req.params.id }, { password: hashedPassword });
-      console.log("sucesso", res);
-      res.status(200).send();
-      //}
+      if (await bcrypt.compare(oldPassword, user.password)) {
+        await User.updateOne(
+          { _id: req.params.id },
+          { password: hashedPassword },
+          { upsert: true }
+        );
+        console.log("sucesso", res);
+        return res.status(200).send();
+      }
+      return res.status(400).send();
     } catch (error) {
       console.log("error", error);
       return res.status(500).send();
