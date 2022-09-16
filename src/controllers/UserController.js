@@ -267,6 +267,37 @@ class UserController {
     }
   }
 
+  async removeUnityAdmin(req, res) {
+    try {
+      const { unityId, adminId } = req.body;
+
+      const user = await User.findOne({ _id: adminId });
+      if (!user) {
+        return res.status(404).json({
+          message: "Usuário não encontrado",
+        });
+      }
+
+      const unity = await Unity.findOne({ _id: unityId });
+      if (!unity) {
+        return res.status(404).json({
+          message: "Unidade não encontrado",
+        });
+      }
+
+      const result = await User.updateOne(
+        { _id: user._id },
+        { unityAdmin: null },
+        { upsert: true }
+      );
+
+      return res.status(200).send(result);
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500);
+    }
+  }
+
   async acceptRequest(req, res) {
     try {
       const userId = req.params.userId;

@@ -19,7 +19,7 @@ async function protect(req, res, next) {
       console.log(decoded);
       // Get user from the token
       req.user = await User.findById(decoded.id).select("-password");
-      if (req.user.accepted === false){
+      if (req.user.accepted === false) {
         throw new Error();
       }
 
