@@ -1,4 +1,3 @@
-// import User from "schemas/User";
 import supertest from "supertest";
 import app from "../../app";
 import { mongoDB } from "../fixtures";
@@ -8,6 +7,7 @@ const NAME = "Will";
 const EMAIL = "will@gmail.com";
 const PASSWORDCRIPTO =
   "$2b$10$vtXewtwsqi.8/ySCn3VnhuJWpnDhJGt7JtAVnsuA1EEegNVdy.x7C";
+const ROLE = "1";
 //---------------------------------------------------------
 let globalResponse;
 let loginResponse;
@@ -27,6 +27,7 @@ beforeAll(async () => {
       name: NAME,
       email: EMAIL,
       password: PASSWORDCRIPTO,
+      role: ROLE,
     });
 });
 
@@ -66,6 +67,17 @@ describe("post login", () => {
     expect(loginResponse.status).toBe(200);
     expect(loginResponse.body).toHaveProperty("_id");
     expect(loginResponse.body).toHaveProperty("token");
+  });
+  test("testa se nao autorizado", async () => {
+    loginResponse = await supertest(app)
+      .post("/login")
+      .set("Content-Type", "application/json")
+      .send({
+        email: EMAIL,
+        password: PASSWORDCRIPTO,
+        accepted: false
+      });
+    expect(loginResponse.status).toBe(401);
   });
   test("testa o endpoint login se der errado", async () => {
     const response = await supertest(app).get("/login").send({
