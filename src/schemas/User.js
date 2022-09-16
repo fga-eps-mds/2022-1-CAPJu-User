@@ -6,7 +6,11 @@ const { Schema, model } = mongoose;
 //------------------------------------------------
 const UserSchema = new Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: true,
+      index: true,
+    },
     email: String,
     password: String,
     recoveryHash: String,

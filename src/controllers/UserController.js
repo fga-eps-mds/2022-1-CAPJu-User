@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
-import Unity from "schemas/Unity.js";
+import Unity from "../schemas/Unity.js";
 
 class UserController {
   async createUser(req, res) {
@@ -40,6 +40,22 @@ class UserController {
       } else {
         return res.status(400);
       }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+
+  async searchUsers(req, res) {
+    try {
+      let search = '"' + req.query.name || "" + '"';
+
+      const query = { $name: { $search: search } };
+
+      const users = await User.find(query).limit(10);
+      return res.status(200).json({
+        users,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
