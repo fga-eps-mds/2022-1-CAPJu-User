@@ -54,7 +54,7 @@ describe("criando usuario", () => {
 });
 //Login----------------------------------------------------
 describe("post login", () => {
-  test("testa o endpoint login", async () => {
+  test.skip("testa o endpoint login", async () => {
     loginResponse = await supertest(app)
       .post("/login")
       .set("Content-Type", "application/json")
