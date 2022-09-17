@@ -10,9 +10,8 @@ class UserController {
   async createUser(req, res) {
     try {
       //cria nome
-      const { name, email, password, role, unity } = await UserValidator.validateAsync(
-        req.body
-      );
+      const { name, email, password, role, unity } =
+        await UserValidator.validateAsync(req.body);
       //ve se o email existe
       const EmailAlreadyExist = await User.findOne({
         email,
@@ -20,6 +19,14 @@ class UserController {
       if (EmailAlreadyExist) {
         return res.status(400).json({ message: "Email ja existe!" });
       }
+
+      const existingUnity = await Unity.findOne({
+        _id: unity,
+      });
+      if (!existingUnity) {
+        return res.status(404).json({ message: "Unidade não encontrada" });
+      }
+
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       //cria novo array de user
@@ -28,7 +35,7 @@ class UserController {
         email,
         password: hashedPassword,
         role,
-        unity
+        unity,
       });
       if (user) {
         return res.status(200).json({

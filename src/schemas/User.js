@@ -21,7 +21,7 @@ const UserSchema = new Schema(
     role: {
       type: Number,
     },
-    unity: String
+    unity: String,
   },
   {
     timestamps: true,
