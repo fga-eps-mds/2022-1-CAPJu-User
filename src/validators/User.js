@@ -6,6 +6,7 @@ export const UserValidator = Joi.object({
   email: Joi.string().required(),
   password: Joi.string().required(),
   role: Joi.number().required().valid(...Object.values(ROLE)),
+  unity: Joi.string().required(),
 });
 
 export const UserEditRoleValidator = Joi.object({
@@ -15,4 +16,5 @@ export const UserEditRoleValidator = Joi.object({
   role: Joi.number().required().valid(...Object.values(ROLE)),
   deleted: Joi.bool().allow(null),
   updatedAt: Joi.string().allow(null, ""),
+  unity: Joi.string().required(),
 });

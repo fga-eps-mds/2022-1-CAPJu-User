@@ -10,7 +10,7 @@ class UserController {
   async createUser(req, res) {
     try {
       //cria nome
-      const { name, email, password, role } = await UserValidator.validateAsync(
+      const { name, email, password, role, unity } = await UserValidator.validateAsync(
         req.body
       );
       //ve se o email existe
@@ -28,12 +28,14 @@ class UserController {
         email,
         password: hashedPassword,
         role,
+        unity
       });
       if (user) {
         return res.status(200).json({
           _id: user.id,
           name: user.name,
           role: user.role,
+          unity: user.unity,
           email: user.email,
           token: generateToken(user._id),
         });
