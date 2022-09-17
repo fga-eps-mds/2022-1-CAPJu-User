@@ -72,24 +72,12 @@ class UserController {
     }
   }
   //----------------------------------------------
-  // Endpoint de deletar um usuário
-  async deleteUser(req, res) {
-    try {
-      const result = await User.deleteOne({ _id: req.prams._id });
-      console.log(result);
-      if (result.deletedCount === 0) {
-        throw new Error(`Não há registro ${req.params._id}!`);
-      }
-      res.json(result);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error);
-    }
-  }
-  //----------------------------------------------
   async user(req, res) {
     try {
       const user = await User.findOne({ name: req.body.name });
+      if (!user) {
+        return res.status(404).json({ message: "o usuário não existe" });
+      }
       return res.status(200).json({
         user,
       });
