@@ -49,6 +49,9 @@ export const authRole = (roleArray) => (req, res, next) => {
   let filtered = roleArray.filter(searchRole);
   if (req.user.role == filtered) {
     return next();
+  } else if (req.url.match('accepted') != null ) {
+    if ('unityAdmin' in req.user)
+      return next();
   }
   return res.status(401).json({ sucess: false, message: "Unauthorized" });
 };
