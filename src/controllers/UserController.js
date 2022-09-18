@@ -47,12 +47,10 @@ class UserController {
   async allUser(req, res) {
     try {
       let accepted, user;
-      if (req.query.accepted){
-        accepted = req.query.accepted === 'true';
-        user = await User.find({accepted: accepted});
-      }
-      else
-      user = await User.find();
+      if (req.query.accepted) {
+        accepted = req.query.accepted === "true";
+        user = await User.find({ accepted: accepted });
+      } else user = await User.find();
       return res.status(200).json({
         user,
       });
@@ -79,9 +77,12 @@ class UserController {
       const { email, password } = req.body;
       // Check for user email
       const user = await User.findOne({ email: email.toString() });
-      if(!user) return res.status(401).json({ message: "o usuário não existe" });
+      if (!user)
+        return res.status(401).json({ message: "o usuário não existe" });
       if (!user.accepted) {
-        return res.status(401).json({ message: "solicitação de cadastro pendente" });
+        return res
+          .status(401)
+          .json({ message: "solicitação de cadastro pendente" });
       }
 
       if (user && (await bcrypt.compare(password.toString(), user.password))) {
@@ -159,7 +160,9 @@ class UserController {
       const hashedPassword = await bcrypt.hash(newPassword, salt);
       const user = await User.findOne({ _id: userId });
       if (!user) {
-        return res.status(404).send();
+        return res
+          .status(404)
+          .json({ message: "Nenhum usuário foi encontrado" });
       }
 
       if (await bcrypt.compare(oldPassword, user.password)) {
@@ -168,13 +171,13 @@ class UserController {
           { password: hashedPassword },
           { upsert: true }
         );
-        console.log("sucesso", res);
-        return res.status(200).send();
+        return res
+          .status(200)
+          .json({ message: "Usuário atualizado com sucesso!" });
       }
-      return res.status(400).send();
+      return res.status(400).json({ message: "Senha inválida! " });
     } catch (error) {
-      console.log("error", error);
-      return res.status(500).send();
+      return res.status(500).json({ message: "Erro a atualizar usuário " });
     }
   }
 
@@ -183,8 +186,7 @@ class UserController {
       const editEmail = await User.updateOne({ _id: req.params.id }, req.body);
       return res.status(200).json(editEmail);
     } catch (error) {
-      console.log(error);
-      return res.status(500).json(error);
+      return res.status(500).json({ message: "Usuário não atualizado!" });
     }
   }
 

@@ -69,7 +69,7 @@ test("testa o endpoint de aceitar solicitação", async () => {
   expect(user.accepted).toEqual(true);
 });
 
-describe("post login", () => {
+describe("testando a função post login", () => {
   test("testa o endpoint login", async () => {
     loginResponse = await supertest(app)
       .post("/login")
@@ -90,7 +90,7 @@ describe("post login", () => {
   });
 });
 //allUser---------------------------------------------------
-describe("get allUser", () => {
+describe("testando a função get allUser", () => {
   test("se der certo", async () => {
     allUserResponse = await supertest(app)
       .get("/allUser")
@@ -99,7 +99,7 @@ describe("get allUser", () => {
   });
 });
 //updateUser(edit email)---------------------------------------------------------------
-describe("put updateUser", () => {
+describe("testando a função put updateUser", () => {
   test("testa o endpoint updateUser", async () => {
     expect(globalResponse.status).toBe(200);
     expect(globalResponse.body).toHaveProperty("_id");
@@ -120,7 +120,7 @@ describe("put updateUser", () => {
 });
 
 //updateUserPassword(edit password)---------------------------------------------------------------
-describe("put updateUser", () => {
+describe("testando a função put updateUser", () => {
   test("testa o endpoint updateUser", async () => {
     expect(globalResponse.status).toBe(200);
     expect(globalResponse.body).toHaveProperty("_id");
