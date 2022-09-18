@@ -102,9 +102,6 @@ describe("post login", () => {
         password: PASSWORDCRIPTO2,
       });
     expect(loginResponse.status).toBe(401);
-    expect(loginResponse.body).toHaveProperty("_id");
-    expect(loginResponse.body).toHaveProperty("token");
-    expect(loginResponse.status).toBe(200);
   });
   test("testa o endpoint login se der errado", async () => {
     const response = await supertest(app).get("/login").send({
