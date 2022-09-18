@@ -16,6 +16,10 @@ routes.get(
 routes.post("/login", UserController.login);
 routes.post("/requestRecovery", UserController.requestRecoveryMail);
 routes.post("/updatePassword", UserController.updatePassword);
+routes.put("/updateUser/:id", UserController.updateUser);
+routes.post("/updateUserPassword/:id", UserController.editPassword);
+routes.post("/acceptRequest/:userId", protect, UserController.acceptRequest);
+routes.delete("/deleteRequest/:userId", protect, UserController.deleteRequest);
 routes.put(
   "/updateRole",
   protect,

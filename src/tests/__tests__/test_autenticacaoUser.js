@@ -9,6 +9,8 @@ const EMAIL = "will@gmail.com";
 const EMAIL2 = "joãoTest@gmail.com";
 const PASSWORDCRIPTO =
   "$2b$10$vtXewtwsqi.8/ySCn3VnhuJWpnDhJGt7JtAVnsuA1EEegNVdy.x7C";
+const ID = "6312a097ddee03692aefdfd9";
+const NEWEMAIL = "newWill@gmail.com";
 const PASSWORDCRIPTO2 =
   "$8b$98$vtXextwszi.8/iSC4LnhuJWpnDhJGt7JtAVnsuA1JJegNVdy.x7C";
 const ROLE = 1;
@@ -16,6 +18,8 @@ const ROLE = 1;
 let globalResponse;
 let loginResponse;
 let allUserResponse;
+let updateUserResponse;
+let updateUserResponsePassword;
 let acceptResponse;
 let globalResponse2;
 //----------------------------------------------------------
@@ -53,6 +57,7 @@ beforeAll(async () => {
 afterAll((done) => {
   mongoDB.disconnect(done);
 });
+
 //createUser---------------------------------
 describe("criando usuario", () => {
   test("testa o endpoint newUser", async () => {
@@ -73,6 +78,7 @@ describe("criando usuario", () => {
     expect(response.status).toBe(404);
   });
 });
+
 //Login----------------------------------------------------
 test("testa o endpoint de aceitar solicitação", async () => {
   expect(acceptResponse.status).toBe(200);
@@ -80,7 +86,7 @@ test("testa o endpoint de aceitar solicitação", async () => {
   expect(user.accepted).toEqual(true);
 });
 
-describe("post login", () => {
+describe("testando a função post login", () => {
   test("testa o endpoint login", async () => {
     loginResponse = await supertest(app)
       .post("/login")
@@ -93,6 +99,7 @@ describe("post login", () => {
     expect(loginResponse.body).toHaveProperty("token");
     expect(loginResponse.status).toBe(200);
   });
+
   test("testa se nao autorizado", async () => {
     loginResponse = await supertest(app)
       .post("/login")
@@ -110,8 +117,9 @@ describe("post login", () => {
     expect(response.status).toBe(404);
   });
 });
+
 //allUser---------------------------------------------------
-describe("get allUser", () => {
+describe("testando a função get allUser", () => {
   test("se der certo", async () => {
     allUserResponse = await supertest(app)
       .get("/allUser")
@@ -120,6 +128,55 @@ describe("get allUser", () => {
     expect(allUserResponse);
   });
 });
+
+//updateUser(edit email)---------------------------------------------------------------
+describe("testando a função put updateUser", () => {
+  test("testa o endpoint updateUser", async () => {
+    expect(globalResponse.status).toBe(200);
+    expect(globalResponse.body).toHaveProperty("_id");
+    expect(globalResponse.body).toHaveProperty("token");
+  });
+  test("se der certo", async () => {
+    updateUserResponse = await supertest(app).put(`/updateUser/${ID}`).send({
+      email: NEWEMAIL,
+    });
+    expect(updateUserResponse.status).toBe(200);
+  });
+  test("se der errado", async () => {
+    updateUserResponse = await supertest(app).put(`/updateUser/00001`).send({
+      email: "newNewWill@gmail.com",
+    });
+    expect(updateUserResponse.status).toBe(500);
+  });
+});
+
+//updateUserPassword(edit password)---------------------------------------------------------------
+describe("testando a função put updateUser", () => {
+  test("testa o endpoint updateUser", async () => {
+    expect(globalResponse.status).toBe(200);
+    expect(globalResponse.body).toHaveProperty("_id");
+    expect(globalResponse.body).toHaveProperty("token");
+  });
+  test("se der certo", async () => {
+    updateUserResponsePassword = await supertest(app)
+      .post(`/updateUserPassword/${globalResponse.body._id}`)
+      .send({
+        oldPassword: PASSWORDCRIPTO,
+        newPassword: "CapJU123",
+      });
+    expect(updateUserResponsePassword.status).toBe(200);
+  });
+  test("se der errado", async () => {
+    updateUserResponsePassword = await supertest(app)
+      .post(`/updateUserPassword/00001`)
+      .send({
+        oldPassword: PASSWORDCRIPTO,
+        newPassword: "CapJU123",
+      });
+    expect(updateUserResponsePassword.status).toBe(500);
+  });
+});
+
 //user--------------------------------------------------------
 describe("user", () => {
   test("testa o endpoint user", async () => {
@@ -132,6 +189,7 @@ describe("user", () => {
     expect(userReponse.status).toBe(404);
   });
 });
+
 //Edit Role
 describe("Alterando perfil de acesso", () => {
   test("testa o endpoint editRoleUser", async () => {
