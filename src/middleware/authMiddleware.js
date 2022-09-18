@@ -49,9 +49,13 @@ export const authRole = (roleArray) => (req, res, next) => {
   let filtered = roleArray.filter(searchRole);
   if (req.user.role == filtered) {
     return next();
-  } else if (req.url.match('accepted') != null ) {
-    if ('unityAdmin' in req.user)
+  } else if ((req.url.match('accepted') != null) 
+  || (req.url.match('acceptRequest') != null) 
+  || (req.url.match('deleteRequest') != null)){
+    if ((req.user.unityAdmin != undefined) ||(req.user.unityAdmin != null)){
+      console.log(req.user.unityAdmin);
       return next();
+    }
   }
   return res.status(401).json({ sucess: false, message: "Unauthorized" });
 };
