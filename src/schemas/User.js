@@ -8,6 +8,7 @@ const UserSchema = new Schema(
     password: String,
     recoveryHash: String,
     recoveryDate: Date,
+    accepted: {type: Boolean, default: false },
   },
   {
     timestamps: true,

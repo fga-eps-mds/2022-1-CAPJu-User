@@ -28,7 +28,6 @@ class UserController {
         email,
         password: hashedPassword,
       });
-      console.log(user);
       if (user) {
         return res.status(200).json({
           _id: user.id,
@@ -47,7 +46,13 @@ class UserController {
 
   async allUser(req, res) {
     try {
-      const user = await User.find();
+      let accepted, user;
+      if (req.query.accepted){
+        accepted = req.query.accepted === 'true';
+        user = await User.find({accepted: accepted});
+      }
+      else
+      user = await User.find();
       return res.status(200).json({
         user,
       });
@@ -74,6 +79,10 @@ class UserController {
       const { email, password } = req.body;
       // Check for user email
       const user = await User.findOne({ email: email.toString() });
+      if(!user) return res.status(401).json({ message: "o usuário não existe" });
+      if (!user.accepted) {
+        return res.status(401).json({ message: "solicitação de cadastro pendente" });
+      }
 
       if (user && (await bcrypt.compare(password.toString(), user.password))) {
         return res.status(200).json({
@@ -83,10 +92,10 @@ class UserController {
           token: generateToken(user._id),
         });
       } else {
-        return res.status(400).json({ message: "senha invalida" });
+        return res.status(400).json({ message: "senha inválida" });
       }
     } catch (error) {
-      return res.status(500);
+      return res.status(500).json({ message: "erro inesperado" });
     }
   }
 
@@ -212,6 +221,34 @@ class UserController {
     } catch (error) {
       console.log("error", error);
       return res.status(500);
+    }
+  }
+
+  async acceptRequest(req, res) {
+    try {
+      const userId = req.params.userId;
+      const user = await User.updateOne({ _id: userId }, { accepted: true });
+
+      return res.status(200).send(user);
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500);
+    }
+  }
+
+  async deleteRequest(req, res) {
+    try {
+      const userId = req.params.userId;
+      const user = await User.deleteOne({ _id: userId });
+
+      if (user.deletedCount === 0) {
+        throw new Error(`Não há registro ${userId}!`);
+      }
+
+      return res.status(200).send(user);
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500).json(error);
     }
   }
 }
