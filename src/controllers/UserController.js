@@ -1,5 +1,5 @@
 import User from "../schemas/User.js";
-import { UserValidator } from "../validators/User.js";
+import { UserValidator, UserEditRoleValidator } from "../validators/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -10,7 +10,7 @@ class UserController {
   async createUser(req, res) {
     try {
       //cria nome
-      const { name, email, password } = await UserValidator.validateAsync(
+      const { name, email, password, role } = await UserValidator.validateAsync(
         req.body
       );
       //ve se o email existe
@@ -27,11 +27,13 @@ class UserController {
         name,
         email,
         password: hashedPassword,
+        role,
       });
       if (user) {
         return res.status(200).json({
           _id: user.id,
           name: user.name,
+          role: user.role,
           email: user.email,
           token: generateToken(user._id),
         });
@@ -59,10 +61,24 @@ class UserController {
       return res.status(500).json(error);
     }
   }
-
+  // Endpoint de editar role de um usuário
+  async editRoleUser(req, res) {
+    try {
+      const body = await UserEditRoleValidator.validateAsync(req.body);
+      const result = await User.updateOne({ _id: body._id }, body);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+  //----------------------------------------------
   async user(req, res) {
     try {
       const user = await User.findOne({ name: req.body.name });
+      if (!user) {
+        return res.status(404).json({ message: "o usuário não existe" });
+      }
       return res.status(200).json({
         user,
       });
@@ -244,7 +260,7 @@ class UserController {
       const user = await User.deleteOne({ _id: userId });
 
       if (user.deletedCount === 0) {
-        throw new Error(`Não há registro ${userId}!`);
+        return res.status(400).send({ message: "Usuário já deletado" });
       }
 
       return res.status(200).send(user);
