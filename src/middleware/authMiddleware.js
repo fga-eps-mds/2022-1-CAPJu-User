@@ -57,7 +57,9 @@ export const authRole = (roleArray) => (req, res, next) => {
       return next();
     }
   }
-  return res.status(401).json({ sucess: false, message: "Unauthorized" });
+  return res
+    .status(401)
+    .json({ sucess: false, message: "Acesso Negado: Perfil sem permissão" });
 };
 
 export { protect };
