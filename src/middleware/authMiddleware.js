@@ -19,7 +19,7 @@ async function protect(req, res, next) {
       console.log(decoded);
       // Get user from the token
       req.user = await User.findById(decoded.id).select("-password");
-      if (req.user.accepted === false){
+      if (req.user.accepted === false) {
         throw new Error();
       }
 
@@ -50,7 +50,9 @@ export const authRole = (roleArray) => (req, res, next) => {
   if (req.user.role == filtered) {
     return next();
   }
-  return res.status(401).json({ sucess: false, message: "Unauthorized" });
+  return res
+    .status(401)
+    .json({ sucess: false, message: "Acesso Negado: Perfil sem permissão" });
 };
 
 export { protect };

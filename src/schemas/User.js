@@ -10,7 +10,6 @@ const UserSchema = new Schema(
     email: String,
     password: String,
     recoveryHash: String,
-    deleted: Boolean,
     recoveryDate: Date,
     accepted: { type: Boolean, default: false },
     role: {
