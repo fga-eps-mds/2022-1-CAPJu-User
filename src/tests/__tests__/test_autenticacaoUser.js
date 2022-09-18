@@ -6,11 +6,14 @@ const NAME = "Will";
 const EMAIL = "will@gmail.com";
 const PASSWORDCRIPTO =
   "$2b$10$vtXewtwsqi.8/ySCn3VnhuJWpnDhJGt7JtAVnsuA1EEegNVdy.x7C";
+const ID = "6312a097ddee03692aefdfd9";
+const NEWEMAIL = "newWill@gmail.com";
 //---------------------------------------------------------
 let globalResponse;
 let loginResponse;
 let allUserResponse;
 let updateUserResponse;
+let updateUserResponsePassword;
 //----------------------------------------------------------
 
 jest.setTimeout(30000);
@@ -82,15 +85,51 @@ describe("get allUser", () => {
     expect(allUserResponse);
   });
 });
-//updateUser---------------------------------------------------------------
+//updateUser(edit email)---------------------------------------------------------------
 describe("put updateUser", () => {
+  test("testa o endpoint updateUser", async () => {
+    expect(globalResponse.status).toBe(200);
+    expect(globalResponse.body).toHaveProperty("_id");
+    expect(globalResponse.body).toHaveProperty("token");
+  });
   test("se der certo", async () => {
-    updateUserResponse = await supertest(app)
-      .put("/updateUser/6312a097ddee03692aefdfd9")
-      .send({
-        email: "eu@gmail.com",
-      });
+    updateUserResponse = await supertest(app).put(`/updateUser/${ID}`).send({
+      email: NEWEMAIL,
+    });
     expect(updateUserResponse.status).toBe(200);
+  });
+  test("se der errado", async () => {
+    updateUserResponse = await supertest(app).put(`/updateUser/00001`).send({
+      email: "newNewWill@gmail.com",
+    });
+    expect(updateUserResponse.status).toBe(500);
+  });
+});
+
+//updateUserPassword(edit password)---------------------------------------------------------------
+describe("put updateUser", () => {
+  test("testa o endpoint updateUser", async () => {
+    expect(globalResponse.status).toBe(200);
+    expect(globalResponse.body).toHaveProperty("_id");
+    expect(globalResponse.body).toHaveProperty("token");
+  });
+  test("se der certo", async () => {
+    updateUserResponsePassword = await supertest(app)
+      .post(`/updateUserPassword/${globalResponse.body._id}`)
+      .send({
+        oldPassword: PASSWORDCRIPTO,
+        newPassword: "CapJU123",
+      });
+    expect(updateUserResponsePassword.status).toBe(200);
+  });
+  test("se der errado", async () => {
+    updateUserResponsePassword = await supertest(app)
+      .post(`/updateUserPassword/00001`)
+      .send({
+        oldPassword: PASSWORDCRIPTO,
+        newPassword: "CapJU123",
+      });
+    expect(updateUserResponsePassword.status).toBe(500);
   });
 });
 
