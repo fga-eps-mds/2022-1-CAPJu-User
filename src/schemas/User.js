@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
+//------------------------------------------------
+
+//------------------------------------------------
 const UserSchema = new Schema(
   {
     name: String,
@@ -8,7 +11,10 @@ const UserSchema = new Schema(
     password: String,
     recoveryHash: String,
     recoveryDate: Date,
-    accepted: {type: Boolean, default: false },
+    accepted: { type: Boolean, default: false },
+    role: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
