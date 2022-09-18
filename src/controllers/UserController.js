@@ -57,13 +57,15 @@ class UserController {
 
   async searchUsers(req, res) {
     try {
-      let search = '"' + req.query.name || "" + '"';
+      let search = req.params.name;
 
-      const query = { $name: { $search: search } };
+      const query = { $text: { $search: "/" + search + "/" } };
 
-      const users = await User.find(query).limit(10);
+      console.log(search, query);
+
+      const user = await User.find(query).limit(10);
       return res.status(200).json({
-        users,
+        user,
       });
     } catch (error) {
       console.log(error);

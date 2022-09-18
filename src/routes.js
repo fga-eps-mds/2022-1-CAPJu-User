@@ -6,7 +6,8 @@ import { ROLE } from "./schemas/role.js";
 const routes = Router();
 
 routes.get("/user", UserController.user);
-routes.get("/searchUsers/:name", UserController.searchUsers);
+routes.get("/searchUsers/:name", protect, UserController.searchUsers);
+routes.get("/searchUsers", protect, UserController.allUser);
 routes.post("/newUser", UserController.createUser);
 routes.get(
   "/allUser",
