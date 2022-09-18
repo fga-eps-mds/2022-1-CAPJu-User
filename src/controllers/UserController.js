@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
+import { transformFromAst } from "@babel/core";
 import Unity from "../schemas/Unity.js";
 
 class UserController {
@@ -100,24 +101,12 @@ class UserController {
     }
   }
   //----------------------------------------------
-  // Endpoint de deletar um usuário
-  async deleteUser(req, res) {
-    try {
-      const result = await User.deleteOne({ _id: req.prams._id });
-      console.log(result);
-      if (result.deletedCount === 0) {
-        throw new Error(`Não há registro ${req.params._id}!`);
-      }
-      res.json(result);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error);
-    }
-  }
-  //----------------------------------------------
   async user(req, res) {
     try {
       const user = await User.findOne({ name: req.body.name });
+      if (!user) {
+        return res.status(404).json({ message: "o usuário não existe" });
+      }
       return res.status(200).json({
         user,
       });
@@ -208,6 +197,43 @@ class UserController {
     } catch (error) {
       console.log("error", error);
       return res.status(500);
+    }
+  }
+  async editPassword(req, res) {
+    try {
+      const userId = req.params.id;
+      const { oldPassword, newPassword } = req.body;
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      const user = await User.findOne({ _id: userId });
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: "Nenhum usuário foi encontrado" });
+      }
+
+      if (await bcrypt.compare(oldPassword, user.password)) {
+        await User.updateOne(
+          { _id: req.params.id },
+          { password: hashedPassword },
+          { upsert: true }
+        );
+        return res
+          .status(200)
+          .json({ message: "Usuário atualizado com sucesso!" });
+      }
+      return res.status(400).json({ message: "Senha inválida! " });
+    } catch (error) {
+      return res.status(500).json({ message: "Erro a atualizar usuário " });
+    }
+  }
+
+  async updateUser(req, res) {
+    try {
+      const editEmail = await User.updateOne({ _id: req.params.id }, req.body);
+      return res.status(200).json(editEmail);
+    } catch (error) {
+      return res.status(500).json({ message: "Usuário não atualizado!" });
     }
   }
 
