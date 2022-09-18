@@ -2,8 +2,7 @@ import supertest from "supertest";
 import app from "../../app";
 import { mongoDB } from "../fixtures";
 import User from "../../schemas/User.js";
-import { TestEnvironment } from "jest-environment-node";
-//funcoes a serem testadas: createUser+- allUser++ logi+- user--
+
 //const--------------------------------------------------
 const NAME = "Will";
 const EMAIL = "will@gmail.com";
@@ -75,6 +74,12 @@ describe("criando usuario", () => {
   });
 });
 //Login----------------------------------------------------
+test("testa o endpoint de aceitar solicitação", async () => {
+  expect(acceptResponse.status).toBe(200);
+  const user = await User.findOne({ _id: globalResponse.body._id });
+  expect(user.accepted).toEqual(true);
+});
+
 describe("post login", () => {
   test("testa o endpoint login", async () => {
     loginResponse = await supertest(app)
@@ -97,6 +102,9 @@ describe("post login", () => {
         password: PASSWORDCRIPTO2,
       });
     expect(loginResponse.status).toBe(401);
+    expect(loginResponse.body).toHaveProperty("_id");
+    expect(loginResponse.body).toHaveProperty("token");
+    expect(loginResponse.status).toBe(200);
   });
   test("testa o endpoint login se der errado", async () => {
     const response = await supertest(app).get("/login").send({
@@ -161,15 +169,6 @@ describe("Recuperar senha", () => {
     expect(globalResponse.status).toBe(200);
     expect(globalResponse.body).toHaveProperty("email");
   });
-  // test("Testa recuperar senha", async () => {
-  //   const response = await supertest(app)
-  //     .post("/requestRecovery")
-  //     .set("Content-Type", "application/json")
-  //     .send({
-  //       email: EMAIL,
-  //     });
-  //   expect(response.status).toBe(200);
-  // });
   test("Testa falha ao recuperar senha", async () => {
     const response = await supertest(app)
       .post("/requestRecovery")
@@ -179,4 +178,15 @@ describe("Recuperar senha", () => {
       });
     expect(response.status).toBe(404);
   });
+});
+
+test("testa endpoint de recusar solicitação", async () => {
+  const deleteResponse = await supertest(app)
+    .delete(`/deleteRequest/${globalResponse.body._id}`)
+    .set("Authorization", `Bearer ${globalResponse.body.token}`);
+
+  const user = await User.findOne({ _id: globalResponse.body._id });
+
+  expect(user).toEqual(null);
+  expect(deleteResponse.status).toBe(200);
 });
