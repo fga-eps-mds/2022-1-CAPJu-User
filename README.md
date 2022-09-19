@@ -8,7 +8,7 @@
 
 ## Sobre Projetos
 
-O CAPJu é abreviação para _"Controle e Acompanhamento de Processos da Justiça"_, no qual trata-se de uma projeto de código aberto que tem como objetivo ajudar os usuários da 4ª vara cível da Justiça Federal na realização de gerenciar os processos.
+O CAPJu é abreviação para _"Controle e Acompanhamento de Processos da Justiça"_, no qual trata-se de uma projeto de código aberto que tem como objetivo ajudar os usuários da 4ª Vara Cível da Justiça Federal a gerenciar processos jurídicos.
 
 Este repositório, em especial, é totalmente dedicado à manutenção dos detalhes do Microserviço User do projeto. Sinta-se livre para contribuir, mas antes leia o guia de contribuição.
 
