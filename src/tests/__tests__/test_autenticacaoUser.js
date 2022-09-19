@@ -28,7 +28,8 @@ jest.setTimeout(30000);
 
 //--------------------------------------------
 beforeAll(async () => {
-  mongoDB.connect();
+  await mongoDB.disconnect();
+  await mongoDB.connect();
   await mongoDB.mongoose.connection.dropDatabase();
   globalResponse = await supertest(app)
     .post("/newUser")
