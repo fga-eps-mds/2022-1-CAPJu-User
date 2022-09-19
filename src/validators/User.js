@@ -16,5 +16,5 @@ export const UserEditRoleValidator = Joi.object({
   role: Joi.number().required().valid(...Object.values(ROLE)),
   deleted: Joi.bool().allow(null),
   updatedAt: Joi.string().allow(null, ""),
-  unity: Joi.string().required(),
+  unity: Joi.string().allow(null, ""),
 });
