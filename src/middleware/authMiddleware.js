@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../schemas/User.js";
-//import { canSeeProcesses } from "../permissions/permissions.js";
-// import UserController from "../controllers/UserController";
+
 
 async function protect(req, res, next) {
   let token;
@@ -34,13 +33,7 @@ async function protect(req, res, next) {
     return res.status(401).send();
   }
 }
-// async function isAdmin(req, res, next) {
-//   console.log(req.user);
-//   if (req.user.role !== 1) {
-//     return res.status(401).send();
-//   }
-//   next();
-// }
+
 
 export const authRole = (roleArray) => (req, res, next) => {
   function searchRole(value) {
@@ -49,6 +42,13 @@ export const authRole = (roleArray) => (req, res, next) => {
   let filtered = roleArray.filter(searchRole);
   if (req.user.role == filtered) {
     return next();
+  } else if ((req.url.match('accepted') != null) 
+  || (req.url.match('acceptRequest') != null) 
+  || (req.url.match('deleteRequest') != null)){
+    if ((req.user.unityAdmin != undefined) ||(req.user.unityAdmin != null)){
+      console.log(req.user.unityAdmin);
+      return next();
+    }
   }
   return res
     .status(401)

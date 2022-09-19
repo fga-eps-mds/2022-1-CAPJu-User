@@ -1,18 +1,18 @@
 import User from "../schemas/User.js";
 import { UserValidator, UserEditRoleValidator } from "../validators/User.js";
+import { unityAdmin, removeAdmin } from "../validators/Unity.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
-import { transformFromAst } from "@babel/core";
+import Unity from "../schemas/Unity.js";
 
 class UserController {
   async createUser(req, res) {
     try {
       //cria nome
-      const { name, email, password, role } = await UserValidator.validateAsync(
-        req.body
-      );
+      const { name, email, password, role, unity } =
+        await UserValidator.validateAsync(req.body);
       //ve se o email existe
       const EmailAlreadyExist = await User.findOne({
         email,
@@ -20,6 +20,14 @@ class UserController {
       if (EmailAlreadyExist) {
         return res.status(400).json({ message: "Email ja existe!" });
       }
+
+      const existingUnity = await Unity.findOne({
+        _id: unity,
+      });
+      if (!existingUnity) {
+        return res.status(404).json({ message: "Unidade não encontrada" });
+      }
+
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       //cria novo array de user
@@ -28,18 +36,38 @@ class UserController {
         email,
         password: hashedPassword,
         role,
+        unity,
       });
       if (user) {
         return res.status(200).json({
           _id: user.id,
           name: user.name,
           role: user.role,
+          unity: user.unity,
           email: user.email,
           token: generateToken(user._id),
         });
       } else {
         return res.status(400);
       }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+
+  async searchUsers(req, res) {
+    try {
+      let search = req.params.name;
+
+      const query = { $text: { $search: "/" + search + "/" } };
+
+      console.log(search, query);
+
+      const user = await User.find(query).limit(10);
+      return res.status(200).json({
+        user,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
@@ -102,11 +130,14 @@ class UserController {
       }
 
       if (user && (await bcrypt.compare(password.toString(), user.password))) {
+        let expiresIn = new Date();
+        expiresIn.setDate(expiresIn.getDate() + 3);
         return res.status(200).json({
           _id: user.id,
           name: user.name,
           email: user.email,
           token: generateToken(user._id),
+          expiresIn,
         });
       } else {
         return res.status(400).json({ message: "senha inválida" });
@@ -242,6 +273,68 @@ class UserController {
     }
   }
 
+  async setUnityAdmin(req, res) {
+    try {
+      const { unityId, userId } = await unityAdmin.validateAsync(req.body);
+
+      const user = await User.findOne({ _id: userId });
+      if (!user) {
+        return res.status(404).json({
+          message: "Usuário não encontrado",
+        });
+      }
+
+      const unity = await Unity.findOne({ _id: unityId });
+      if (!unity) {
+        return res.status(404).json({
+          message: "Unidade não encontrado",
+        });
+      }
+
+      const result = await User.updateOne(
+        { _id: user._id },
+        { unityAdmin: unity._id },
+        { upsert: true }
+      );
+
+      return res.status(200).send(result);
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500);
+    }
+  }
+
+  async removeUnityAdmin(req, res) {
+    try {
+      const { unityId, adminId } = await removeAdmin.validateAsync(req.body);
+
+      const user = await User.findOne({ _id: adminId });
+      if (!user) {
+        return res.status(404).json({
+          message: "Usuário não encontrado",
+        });
+      }
+
+      const unity = await Unity.findOne({ _id: unityId });
+      if (!unity) {
+        return res.status(404).json({
+          message: "Unidade não encontrado",
+        });
+      }
+
+      const result = await User.updateOne(
+        { _id: user._id },
+        { unityAdmin: null },
+        { upsert: true }
+      );
+
+      return res.status(200).send(result);
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500);
+    }
+  }
+
   async acceptRequest(req, res) {
     try {
       const userId = req.params.userId;
@@ -272,7 +365,7 @@ class UserController {
 }
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "1d",
+    expiresIn: "3d",
   });
 };
 export default new UserController();
