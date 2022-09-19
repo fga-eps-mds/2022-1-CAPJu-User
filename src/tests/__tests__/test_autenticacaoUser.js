@@ -4,7 +4,6 @@ import { mongoDB } from "../fixtures";
 import User from "../../schemas/User.js";
 import Unity from "../../schemas/Unity.js";
 
-
 //const--------------------------------------------------
 const NAME = "Will";
 const EMAIL = "will@gmail.com";
@@ -24,14 +23,14 @@ let updateUserResponse;
 let updateUserResponsePassword;
 let acceptResponse;
 let globalResponse2;
-let unity
+let unity;
 //----------------------------------------------------------
 
 //--------------------------------------------
 beforeAll(async () => {
   await mongoDB.connect();
   await mongoDB.mongoose.connection.dropDatabase();
-  unity = await Unity.create({name: 'peritos', deleted: false})
+  unity = await Unity.create({ name: "peritos", deleted: false });
   globalResponse = await supertest(app)
     .post("/newUser")
     .set("Content-Type", "application/json")
@@ -53,7 +52,7 @@ beforeAll(async () => {
       role: ROLE,
     });
   await User.updateOne({ _id: globalResponse.body._id }, { accepted: true });
-  console.log(globalResponse.body)
+  console.log(globalResponse.body);
   acceptResponse = await supertest(app)
     .post(`/acceptRequest/${globalResponse.body._id}`)
     .set("Authorization", `Bearer ${globalResponse.body.token}`);

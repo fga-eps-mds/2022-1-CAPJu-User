@@ -1,5 +1,6 @@
 import User from "../schemas/User.js";
 import { UserValidator, UserEditRoleValidator } from "../validators/User.js";
+import { unityAdmin, removeAdmin } from "../validators/Unity.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -274,7 +275,7 @@ class UserController {
 
   async setUnityAdmin(req, res) {
     try {
-      const { unityId, userId } = req.body;
+      const { unityId, userId } = await unityAdmin.validateAsync(req.body);
 
       const user = await User.findOne({ _id: userId });
       if (!user) {
@@ -305,7 +306,7 @@ class UserController {
 
   async removeUnityAdmin(req, res) {
     try {
-      const { unityId, adminId } = req.body;
+      const { unityId, adminId } = await removeAdmin.validateAsync(req.body);
 
       const user = await User.findOne({ _id: adminId });
       if (!user) {
