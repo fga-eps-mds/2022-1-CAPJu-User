@@ -99,7 +99,7 @@ export default {
   // projects: undefined,
 
   // Use this configuration option to add custom reporters to Jest
-  // reporters: undefined,
+  reporters: ['default', 'jest-sonar'],
 
   // Automatically reset mock state before every test
   // resetMocks: false,
@@ -125,7 +125,7 @@ export default {
   // runner: "jest-runner",
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  setupFiles: ["./tests/setup.js"],
+  setupFiles: ["./src/tests/setup.js"],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],
